@@ -31,15 +31,24 @@ class Cell:
             location,
             width=utils.cell_width(),
             height=utils.cell_height(),
-            text=f"{self.x},{self.y}"
+            text=f"{self.x}, {self.y}"
         )
         btn.bind('<Button-1>', self.left_click_actions)  # Left Click
         btn.bind('<Button-3>', self.right_click_actions)  # Right Click
         self.cell_btn_object = btn
 
     def left_click_actions(self, event):
-        print(event)
-        print("I am left clicked!")
+        if self.is_mine:
+            self.show_mine()
+        else:
+            self.show_cell()
+
+    def show_cell(self):
+        pass
+
+    def show_mine(self):
+        # A logic to interrupt the game and display a message that player lost!
+        self.cell_btn_object.configure(bg="red")
 
     def right_click_actions(self, event):
         print(event)
