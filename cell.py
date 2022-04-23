@@ -1,7 +1,9 @@
-from tkinter import Button, Label
+from tkinter import Button, Label, Event
 import utils
 import random
 import settings
+import ctypes
+import sys
 
 
 class Cell:
@@ -15,7 +17,6 @@ class Cell:
         :param x: x location on cells' grid
         :param y: y location on cells' grid
         :param is_mine: is the cell a mine (Boolean)
-        :param is_opened: is the cell opened (Boolean)
         """
         self.is_mine = is_mine
         self.is_opened = False
@@ -61,7 +62,8 @@ class Cell:
         )
         Cell.cell_count_label_object = lbl
 
-    def left_click_actions(self, event):
+    def left_click_actions(self, event: Event):
+        print(event)
         if self.is_mine:
             self.show_mine()
         else:
@@ -69,6 +71,10 @@ class Cell:
                 for cell_obj in self.surrounded_cells:
                     cell_obj.show_cell()
             self.show_cell()
+
+        # Cancel Left and Right click events if cell is already opened:
+        self.cell_btn_object.unbind("<Button-1>")
+        self.cell_btn_object.unbind("<Button-3>")
 
     @staticmethod
     def get_cell_by_axis(x: int, y: int):
@@ -111,7 +117,10 @@ class Cell:
     def show_cell(self):
         if not self.is_opened:
             Cell.cell_count = Cell.cell_count - 1
-            self.cell_btn_object.configure(text=self.surrounded_cells_mines_length)
+            self.cell_btn_object.configure(
+                text=self.surrounded_cells_mines_length,
+                bg="SystemButtonFace"
+            )
             # Replace the text of cell count label with the newer count
             if Cell.cell_count_label_object:
                 Cell.cell_count_label_object.configure(
@@ -121,12 +130,30 @@ class Cell:
             self.is_opened = True
 
     def show_mine(self):
-        # A logic to interrupt the game and display a message that player lost!
         self.cell_btn_object.configure(bg="red")
+        ctypes.windll.user32.MessageBoxW(0, "You clicked on a mine :(", "Game Over", 0)
+        sys.exit()
 
-    def right_click_actions(self, event):
+    def right_click_actions(self, event: Event):
         print(event)
-        print("I am right clicked!")
+        if not self.is_opened:
+            if not self.is_mine_candidate:
+                self.cell_btn_object.configure(
+                    bg="orange"
+                )
+                self.is_mine_candidate = True
+            elif self.is_mine_candidate and not self.is_marked_mine:
+                self.cell_btn_object.configure(
+                    bg="green"
+                )
+                # self.is_mine_candidate = False
+                self.is_marked_mine = True
+            else:
+                self.cell_btn_object.configure(
+                    bg="SystemButtonFace"
+                )
+                self.is_mine_candidate = False
+                self.is_marked_mine = False
 
     @staticmethod
     def randomize_mines():
