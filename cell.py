@@ -10,6 +10,10 @@ class Cell:
     all = []
     cell_count = settings.CELL_COUNT
     cell_count_label_object = None
+    mines_count = settings.MINES_COUNT
+    mines_count_label_object = None
+    moves_count = 0
+    moves_count_label_object = None
 
     def __init__(self, x, y, is_mine=False):
         """
@@ -56,17 +60,53 @@ class Cell:
             bg="black",
             fg="white",
             text=f"Cells Left: {Cell.cell_count}",
-            width=utils.cell_count_label_width(),
-            height=utils.cell_count_label_height(),
             font=("", utils.cell_count_label_font_size())
         )
         Cell.cell_count_label_object = lbl
+
+    @staticmethod
+    def create_mines_count_label(location):
+        """
+        Initialize the Cell Count Label Object of the game
+        :param location: tkinter.Frame for Label's location
+        :return: Label object of cell count
+        """
+        lbl = Label(
+            location,
+            bg="black",
+            fg="white",
+            text=f"Mines Left: {Cell.mines_count}",
+            font=("", utils.cell_count_label_font_size())
+        )
+        Cell.mines_count_label_object = lbl
+
+    @staticmethod
+    def create_moves_count_label(location):
+        """
+        Initialize the Cell Count Label Object of the game
+        :param location: tkinter.Frame for Label's location
+        :return: Label object of cell count
+        """
+        lbl = Label(
+            location,
+            bg="black",
+            fg="white",
+            text=f"Moves made: {Cell.moves_count}",
+            font=("", utils.cell_count_label_font_size())
+        )
+        Cell.moves_count_label_object = lbl
 
     def left_click_actions(self, event: Event):
         print(event)
         if self.is_mine:
             self.show_mine()
         else:
+            # Changing moves count label to newer count
+            Cell.moves_count = Cell.moves_count + 1
+            if Cell.moves_count_label_object:
+                Cell.moves_count_label_object.configure(
+                    text=f"Moves made: {Cell.moves_count}"
+                )
             if self.surrounded_cells_mines_length == 0:
                 for cell_obj in self.surrounded_cells:
                     cell_obj.show_cell()
@@ -130,6 +170,13 @@ class Cell:
                 Cell.cell_count_label_object.configure(
                     text=f"Cells Left: {Cell.cell_count}"
                 )
+            # Changing mines count label if showing cell of marked mine
+            if self.is_marked_mine:
+                Cell.mines_count = Cell.mines_count + 1
+                if Cell.mines_count_label_object:
+                    Cell.mines_count_label_object.configure(
+                        text=f"Mines Left: {Cell.mines_count}"
+                    )
             # Mark the cell as opened as the last line of this method
             self.is_opened = True
 
@@ -141,21 +188,38 @@ class Cell:
     def right_click_actions(self, event: Event):
         print(event)
         if not self.is_opened:
+            # Changing moves count label to newer count
+            Cell.moves_count = Cell.moves_count + 1
+            if Cell.moves_count_label_object:
+                Cell.moves_count_label_object.configure(
+                    text=f"Moves made: {Cell.moves_count}"
+                )
             if not self.is_mine_candidate:
                 self.cell_btn_object.configure(
                     bg="orange"
                 )
                 self.is_mine_candidate = True
             elif self.is_mine_candidate and not self.is_marked_mine:
+                Cell.mines_count = Cell.mines_count - 1
                 self.cell_btn_object.configure(
                     bg="green"
                 )
-                # self.is_mine_candidate = False
+                # Replace the text of mines count label with the newer count
+                if Cell.mines_count_label_object:
+                    Cell.mines_count_label_object.configure(
+                        text=f"Mines Left: {Cell.mines_count}"
+                    )
                 self.is_marked_mine = True
             else:
+                Cell.mines_count = Cell.mines_count + 1
                 self.cell_btn_object.configure(
                     bg="SystemButtonFace"
                 )
+                # Replace the text of mines count label with the newer count
+                if Cell.mines_count_label_object:
+                    Cell.mines_count_label_object.configure(
+                        text=f"Mines Left: {Cell.mines_count}"
+                    )
                 self.is_mine_candidate = False
                 self.is_marked_mine = False
 

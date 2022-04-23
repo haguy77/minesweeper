@@ -58,8 +58,16 @@ for x in range(settings.GRID_SIZE):
         )
 
 # Call the label from the Cell class
+# Cell count label
 Cell.create_cell_count_label(left_frame)
 Cell.cell_count_label_object.place(x=0, y=0)
+# Mines count label
+Cell.create_mines_count_label(left_frame)
+Cell.mines_count_label_object.place(x=0, y=settings.HEIGHT / 13.5)
+# Mines count label
+Cell.create_moves_count_label(left_frame)
+Cell.moves_count_label_object.place(x=0, y=(settings.HEIGHT / 13.5) * 2)
+
 
 Cell.randomize_mines()
 
