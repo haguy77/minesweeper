@@ -33,3 +33,28 @@ def cell_width() -> int:
     :return: width of the cell
     """
     return settings.WIDTH // 90
+
+
+def cell_count_label_height() -> int:
+    """
+    Calculates height of the cell count label  according to settings.HEIGHT
+    :return: height of the cell
+    """
+    return settings.HEIGHT // 135
+
+
+def cell_count_label_width() -> int:
+    """
+    Calculates width of the cell count label according to settings.WIDTH
+    :return: width of the cell
+    """
+    return settings.WIDTH // 90
+
+
+def cell_count_label_font_size() -> int:
+    """
+    Calculates font size for the cell count label according to
+    (settings.WIDTH * settings.HEIGHT) // 23328
+    :return: cell count label font size
+    """
+    return (settings.WIDTH * settings.HEIGHT) // 23328
