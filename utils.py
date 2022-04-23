@@ -58,3 +58,12 @@ def cell_count_label_font_size() -> int:
     :return: cell count label font size
     """
     return (settings.WIDTH * settings.HEIGHT) // 23328
+
+
+def cell_game_tital_font_size() -> int:
+    """
+    Calculates font size for the game title label according to
+    (settings.WIDTH * settings.HEIGHT) // 12678
+    :return: game title label font size
+    """
+    return (settings.WIDTH * settings.HEIGHT) // 12678
